@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import featureFunction
+from . import featureFunction
 
 
 class FeatureSpace:
@@ -41,6 +41,7 @@ class FeatureSpace:
     print a.result(method='dict')
 
     """
+
     def __init__(self, Data=None, featureList=None, excludeList=[], **kwargs):
         self.featureFunc = []
         self.featureList = []
@@ -60,14 +61,16 @@ class FeatureSpace:
                             if inspect.isclass(obj) and name != 'Base':
                                 if obj.__module__.endswith('FeatureFunctionLib'):
                                     # if set(obj().Data).issubset(self.Data):
-                                    self.featureOrder.append((inspect.getsourcelines(obj)[-1:])[0])
+                                    self.featureOrder.append(
+                                        (inspect.getsourcelines(obj)[-1:])[0])
                                     self.featureList.append(name)
                     else:
                         for name, obj in inspect.getmembers(featureFunction):
                             if inspect.isclass(obj) and name != 'Base' and not name in excludeList:
                                 if obj.__module__.endswith('FeatureFunctionLib'):
                                     # if set(obj().Data).issubset(self.Data):
-                                    self.featureOrder.append((inspect.getsourcelines(obj)[-1:])[0])
+                                    self.featureOrder.append(
+                                        (inspect.getsourcelines(obj)[-1:])[0])
                                     self.featureList.append(name)
 
                 else:
@@ -85,15 +88,18 @@ class FeatureSpace:
                             if obj.__module__.endswith('FeatureFunctionLib'):
                                 if name in kwargs.keys():
                                     if set(obj(kwargs[name]).Data).issubset(self.Data):
-                                        self.featureOrder.append((inspect.getsourcelines(obj)[-1:])[0])
+                                        self.featureOrder.append(
+                                            (inspect.getsourcelines(obj)[-1:])[0])
                                         self.featureList.append(name)
 
                                 else:
                                     if set(obj().Data).issubset(self.Data):
-                                        self.featureOrder.append((inspect.getsourcelines(obj)[-1:])[0])
+                                        self.featureOrder.append(
+                                            (inspect.getsourcelines(obj)[-1:])[0])
                                         self.featureList.append(name)
                                     else:
-                                        print "Warning: the feature", name, "could not be calculated because", obj().Data, "are needed."
+                                        print(
+                                            f"Warning: the feature {name} could not be calculated because {obj().Data} are needed.")
                 else:
 
                     for feature in featureList:
@@ -103,12 +109,14 @@ class FeatureSpace:
                                     if set(obj().Data).issubset(self.Data):
                                         self.featureList.append(name)
                                     else:
-                                        print "Warning: the feature", name, "could not be calculated because", obj().Data, "are needed."
+                                        print(
+                                            f"Warning: the feature {name} could not be calculated because {obj().Data} are needed.")
 
             if self.featureOrder != []:
                 self.sort = True
                 self.featureOrder = np.argsort(self.featureOrder)
-                self.featureList = [self.featureList[i] for i in self.featureOrder]
+                self.featureList = [self.featureList[i]
+                                    for i in self.featureOrder]
                 self.idx = np.argsort(self.featureList)
 
         else:
@@ -121,19 +129,19 @@ class FeatureSpace:
                 try:
                     a = getattr(m, item)(kwargs[item])
                 except:
-                    print "error in feature " + item
+                    print(f"error in feature {item}")
                     sys.exit(1)
             else:
                 try:
                     a = getattr(m, item)()
                 except:
-                    print " could not find feature " + item
+                    print(f" could not find feature {item}")
                     # discuss -- should we exit?
                     sys.exit(1)
             try:
                 self.featureFunc.append(a.fit)
             except:
-                print "could not initilize " + item
+                print(f"could not initilize {item}")
 
     def calculateFeature(self, data):
         self._X = np.asarray(data)
@@ -160,4 +168,3 @@ class FeatureSpace:
                 return self.featureList
         else:
             return self.__result
-

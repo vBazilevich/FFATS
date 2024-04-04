@@ -21,7 +21,7 @@ def get_requirements():
             if not line.startswith("#")]
 
 setup(
-    name='FATS',
+    name='FFATS',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -75,10 +75,10 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    # packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
 
-    packages = ['FATS'],
-
+    #packages = ['FFATS'],
+    
     include_package_data=True,
 
     zip_safe=False,
