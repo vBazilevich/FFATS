@@ -906,30 +906,16 @@ class CAR_sigma(Base):
 
         Omega = []
         x_hat = []
-        a = []
-        x_ast = []
-
-        # Omega = np.zeros((num_datos,1))
-        # x_hat = np.zeros((num_datos,1))
-        # a = np.zeros((num_datos,1))
-        # x_ast = np.zeros((num_datos,1))
-
-        # Omega[0]=(tau*(sigma**2))/2.
-        # x_hat[0]=0.
-        # a[0]=0.
-        # x_ast[0]=x[0] - b*tau
+        a = np.exp(-(t[1:] - t[:-1]) / tau)
+        x_ast = x - b * tau
 
         Omega.append((tau * (sigma ** 2)) / 2.)
         x_hat.append(0.)
-        a.append(0.)
-        x_ast.append(x[0] - b * tau)
 
         loglik = 0.
 
         for i in range(1, num_datos):
-
-            a_new = np.exp(-(t[i] - t[i - 1]) / tau)
-            x_ast.append(x[i] - b * tau)
+            a_new = a[i - 1]
             x_hat.append(
                 a_new * x_hat[i - 1] +
                 (a_new * Omega[i - 1] / (Omega[i - 1] + error_vars[i - 1])) *
@@ -938,12 +924,6 @@ class CAR_sigma(Base):
             Omega.append(
                 Omega[0] * (1 - (a_new ** 2)) + ((a_new ** 2)) * Omega[i - 1] *
                 (1 - (Omega[i - 1] / (Omega[i - 1] + error_vars[i - 1]))))
-
-            # x_ast[i]=x[i] - b*tau
-            # x_hat[i]=a_new*x_hat[i-1] + (a_new*Omega[i-1]/(Omega[i-1] +
-            # error_vars[i-1]))*(x_ast[i-1]-x_hat[i-1])
-            # Omega[i]=Omega[0]*(1-(a_new**2)) + ((a_new**2))*Omega[i-1]*
-            # ( 1 - (Omega[i-1]/(Omega[i-1]+ error_vars[i-1])))
 
             loglik_inter = np.log(
                 ((2 * np.pi * (Omega[i] + error_vars[i])) ** -0.5) *
