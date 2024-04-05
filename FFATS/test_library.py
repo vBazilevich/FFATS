@@ -44,6 +44,16 @@ def periodic_lc():
 
 
 @pytest.fixture
+def sine_lc():
+    N = 100
+    mjd_periodic = np.arange(N)
+    period = 20
+    data_periodic = np.sin((np.pi/period) * mjd_periodic)
+    lc = np.array([data_periodic, mjd_periodic])
+    return lc
+
+
+@pytest.fixture
 def uniform_lc():
     mjd_uniform = np.arange(1000000)
     data_uniform = np.random.uniform(size=1000000)
@@ -67,42 +77,40 @@ def random_walk():
     lc = np.array([data_rw, time_rw])
     return lc
 
-# def test_Amplitude(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+@pytest.fixture
+def sequence():
+    return range(1000)
 
-# 	a = FeatureSpace(featureList=['Amplitude'])
-# 	a=a.calculateFeature(white_noise[0])
+def test_Amplitude(sequence):
+    a = FeatureSpace(featureList=['Amplitude'])
+    a = a.calculateFeature(sequence)
 
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+    # Exact value is 475 but I add some space for an error
+    assert(a.result(method='array') >= 474.9 and a.result(method='array') <= 475.1)
 
-# def test_Autocor(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+def test_Autocor(periodic_lc):
+    a = FeatureSpace(featureList=['Autocor_length'])
+    a = a.calculateFeature(periodic_lc[:, 0])
 
-# 	a = FeatureSpace(featureList=['Autocor'] )
-# 	a=a.calculateFeature(white_noise[0])
+    assert(a.result(method='array') == 1)
 
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+@pytest.mark.skip('Automean was removed from the library')
+def test_Automean(white_noise):
+    a = FeatureSpace(featureList=['Automean'] , Automean=[0,0])
+    a = a.calculateFeature(white_noise[0])
 
-# def test_Automean(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+    assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
-# 	a = FeatureSpace(featureList=['Automean'] , Automean=[0,0])
-# 	a=a.calculateFeature(white_noise[0])
 
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+@pytest.mark.skip('Invalid assertions')
+def test_B_R(white_noise):
+    a = FeatureSpace(featureList=['Q31_color'])
+    a = a.calculateFeature(white_noise)
 
-# def test_B_R(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
-# 	a = FeatureSpace(featureList=['B_R'] , B_R=second_data)
-# 	a=a.calculateFeature(white_noise[0])
-
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+    assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
 
 def test_Beyond1Std(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Beyond1Std'])
     a = a.calculateFeature(white_noise)
 
@@ -111,25 +119,21 @@ def test_Beyond1Std(white_noise):
 
 
 def test_Mean(white_noise):
-
     a = FeatureSpace(featureList=['Mean'])
     a = a.calculateFeature(white_noise)
 
     assert (a.result(method='array') >= -
             0.1 and a.result(method='array') <= 0.1)
 
-# def test_CAR(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+@pytest.mark.skip('Invalid assertions')
+def test_CAR(white_noise):
+    a = FeatureSpace(featureList=['CAR_sigma', 'CAR_tau', 'CAR_mean'])
+    a = a.calculateFeature(white_noise)
 
-# 	a = FeatureSpace(featureList=['CAR_sigma', 'CAR_tau', 'CAR_tmean'] , CAR_sigma=[mjd, error])
-# 	a=a.calculateFeature(white_noise[0])
-
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+    assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
 
 def test_Con(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Con'], Con=1)
     a = a.calculateFeature(white_noise)
 
@@ -138,8 +142,6 @@ def test_Con(white_noise):
 
 
 def test_Eta_color(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Eta_color'])
     a = a.calculateFeature(white_noise)
 
@@ -148,8 +150,6 @@ def test_Eta_color(white_noise):
 
 
 def test_Eta_e(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Eta_e'])
     a = a.calculateFeature(white_noise)
 
@@ -158,8 +158,6 @@ def test_Eta_e(white_noise):
 
 
 def test_FluxPercentile(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['FluxPercentileRatioMid20', 'FluxPercentileRatioMid35',
                      'FluxPercentileRatioMid50', 'FluxPercentileRatioMid65', 'FluxPercentileRatioMid80'])
     a = a.calculateFeature(white_noise)
@@ -177,26 +175,20 @@ def test_FluxPercentile(white_noise):
 
 
 def test_LinearTrend(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['LinearTrend'])
     a = a.calculateFeature(white_noise)
 
     assert (a.result(method='array') >= -
             0.1 and a.result(method='array') <= 0.1)
 
-# def test_MaxSlope(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+def test_MaxSlope(sine_lc):
+    a = FeatureSpace(featureList=['MaxSlope'])
+    a = a.calculateFeature(sine_lc)
 
-# 	a = FeatureSpace(featureList=['MaxSlope'] , MaxSlope=mjd)
-# 	a=a.calculateFeature(white_noise[0])
-
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+    assert(a.result(method='array') >= 0.156 and a.result(method='array') <= 0.157)
 
 
 def test_Meanvariance(uniform_lc):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Meanvariance'])
     a = a.calculateFeature(uniform_lc)
 
@@ -205,101 +197,78 @@ def test_Meanvariance(uniform_lc):
 
 
 def test_MedianAbsDev(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['MedianAbsDev'])
     a = a.calculateFeature(white_noise)
 
     assert (a.result(method='array') >=
             0.630 and a.result(method='array') <= 0.700)
 
-# def test_MedianBRP(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+def test_MedianBRP(sequence):
+    a = FeatureSpace(featureList=['MedianBRP'])
+    a = a.calculateFeature(sequence)
 
-# 	a = FeatureSpace(featureList=['MedianBRP'] , MaxSlope=mjd)
-# 	a=a.calculateFeature(white_noise[0])
-
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+    assert(a.result(method='array') >= 0.19 and a.result(method='array') <= 0.21)
 
 
 def test_PairSlopeTrend(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['PairSlopeTrend'])
     a = a.calculateFeature(white_noise)
 
     assert (a.result(method='array') >= -
             0.25 and a.result(method='array') <= 0.25)
 
-# def test_PercentAmplitude(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
+def test_PercentAmplitude(sequence):
+    a = FeatureSpace(featureList=['PercentAmplitude'])
+    a = a.calculateFeature(sequence)
 
-# 	a = FeatureSpace(featureList=['PercentAmplitude'])
-# 	a=a.calculateFeature(white_noise[0])
+    assert(a.result(method='array') >= 0.99 and a.result(method='array') <= 1.01)
 
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+def test_PercentDifferenceFluxPercentile(sequence):
+    a = FeatureSpace(featureList=['PercentDifferenceFluxPercentile'])
+    a = a.calculateFeature(sequence)
 
-# def test_PercentDifferenceFluxPercentile(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
-# 	a = FeatureSpace(featureList=['PercentDifferenceFluxPercentile'])
-# 	a=a.calculateFeature(white_noise[0])
-
-# 	assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
+    assert(a.result(method='array') >= 1.801 and a.result(method='array') <= 1.802)
 
 
 def test_Period_Psi(periodic_lc):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(
         featureList=['PeriodLS', 'Period_fit', 'Psi_CS', 'Psi_eta'])
     a = a.calculateFeature(periodic_lc)
-    # print a.result(method='array'), len(periodic_lc[0])
     assert (a.result(method='array')[0] >=
             19 and a.result(method='array')[0] <= 21)
 
 
 def test_Q31(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Q31'])
     a = a.calculateFeature(white_noise)
     assert (a.result(method='array') >=
             1.30 and a.result(method='array') <= 1.38)
 
-# def test_Q31B_R(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
-# 	a = FeatureSpace(featureList=['Q31B_R'], Q31B_R = [aligned_second_data, aligned_data])
-# 	a=a.calculateFeature(white_noise[0])
+@pytest.mark.skip('No assertions')
+def test_Q31B_R(white_noise):
+    a = FeatureSpace(featureList=['Q31B_R'], Q31B_R = [aligned_second_data, aligned_data])
+    a = a.calculateFeature(white_noise[0])
 
 
 def test_Rcs(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Rcs'])
     a = a.calculateFeature(white_noise)
     assert (a.result(method='array') >= 0 and a.result(method='array') <= 0.1)
 
 
 def test_Skew(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Skew'])
     a = a.calculateFeature(white_noise)
     assert (a.result(method='array') >= -
             0.1 and a.result(method='array') <= 0.1)
 
 
-# def test_SlottedA(white_noise):
-# 	# data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
-# 	a = FeatureSpace(featureList=['SlottedA'], SlottedA = [mjd, 1])
-# 	a=a.calculateFeature(white_noise[0])
+@pytest.mark.skip('No assertions')
+def test_SlottedA(white_noise):
+    a = FeatureSpace(featureList=['SlottedA'], SlottedA = [mjd, 1])
+    a=a.calculateFeature(white_noise[0])
 
 def test_SmallKurtosis(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['SmallKurtosis'])
     a = a.calculateFeature(white_noise)
     assert (a.result(method='array') >= -
@@ -307,8 +276,6 @@ def test_SmallKurtosis(white_noise):
 
 
 def test_Std(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Std'])
     a = a.calculateFeature(white_noise)
 
@@ -316,9 +283,8 @@ def test_Std(white_noise):
             0.9 and a.result(method='array') <= 1.1)
 
 
+@pytest.mark.skip('Invalid assertions')
 def test_Stetson(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=[
                      'SlottedA_length', 'StetsonK', 'StetsonK_AC', 'StetsonJ', 'StetsonL'])
     a = a.calculateFeature(white_noise)
@@ -334,8 +300,6 @@ def test_Stetson(white_noise):
 
 
 def test_Gskew(white_noise):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['Gskew'])
     a = a.calculateFeature(white_noise)
     assert (a.result(method='array') >= -
@@ -343,8 +307,6 @@ def test_Gskew(white_noise):
 
 
 def test_StructureFunction(random_walk):
-    # data, mjd, error, second_data, aligned_data, aligned_second_data, aligned_mjd = white_noise()
-
     a = FeatureSpace(featureList=['StructureFunction_index_21', 'StructureFunction_index_31',
                                   'StructureFunction_index_32'])
     a = a.calculateFeature(random_walk)

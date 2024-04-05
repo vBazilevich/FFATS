@@ -23,13 +23,12 @@ class Amplitude(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data[0]
-        N = len(magnitude)
+        magnitude = data
+        N = magnitude.shape[0]
         sorted_mag = np.sort(magnitude)
 
         return (np.median(sorted_mag[-int(math.ceil(0.05 * N)):]) -
                 np.median(sorted_mag[0:int(math.ceil(0.05 * N))])) / 2.0
-        # return sorted_mag[10]
 
 
 class Rcs(Base):
@@ -88,7 +87,7 @@ class Autocor_length(Base):
 
     def fit(self, data):
 
-        magnitude = data[0]
+        magnitude = data
         AC = stattools.acf(magnitude, nlags=self.nlags)
         k = next((index for index, value in
                  enumerate(AC) if value < np.exp(-1)), None)
@@ -499,10 +498,10 @@ class MedianBRP(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data[0]
+        magnitude = data
         median = np.median(magnitude)
         amplitude = (np.max(magnitude) - np.min(magnitude)) / 10
-        n = len(magnitude)
+        n = magnitude.shape[0]
 
         count = np.sum(np.logical_and(magnitude < median + amplitude,
                                       magnitude > median - amplitude))
@@ -644,7 +643,7 @@ class PercentDifferenceFluxPercentile(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data[0]
+        magnitude = data
         median_data = np.median(magnitude)
 
         sorted_data = np.sort(magnitude)
@@ -664,7 +663,7 @@ class PercentAmplitude(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data[0]
+        magnitude = data
         median_data = np.median(magnitude)
         distance_median = np.abs(magnitude - median_data)
         max_distance = np.max(distance_median)
@@ -893,16 +892,12 @@ class Psi_eta(Base):
 class CAR_sigma(Base):
 
     def __init__(self):
-
         self.Data = ['magnitude', 'time', 'error']
 
     def CAR_Lik(self, parameters, t, x, error_vars):
 
         sigma = parameters[0]
         tau = parameters[1]
-        # b = parameters[1] #comment it to do 2 pars estimation
-        # tau = params(1,1);
-        # sigma = sqrt(2*var(x)/tau);
 
         b = np.mean(x) / tau
         epsilon = 1e-300
@@ -983,9 +978,7 @@ class CAR_sigma(Base):
     #     return CAR_sigma.tau
 
     def fit(self, data):
-        # LC = np.hstack((self.time , data.reshape((self.N,1)), self.error))
-
-        N = len(data[0])
+        N = data[0].shape[0]
         magnitude = data[0].reshape((N, 1))
         time = data[1].reshape((N, 1))
         error = data[2].reshape((N, 1)) ** 2
