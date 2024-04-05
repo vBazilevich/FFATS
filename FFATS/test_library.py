@@ -81,86 +81,101 @@ def random_walk():
 def sequence():
     return range(1000)
 
-def test_Amplitude(sequence):
+
+def test_Amplitude(benchmark, sequence):
     a = FeatureSpace(featureList=['Amplitude'])
-    a = a.calculateFeature(sequence)
+    a = benchmark(a.calculateFeature, sequence)
 
     # Exact value is 475 but I add some space for an error
     assert(a.result(method='array') >= 474.9 and a.result(method='array') <= 475.1)
 
-def test_Autocor(periodic_lc):
+
+def test_Autocor(benchmark, periodic_lc):
     a = FeatureSpace(featureList=['Autocor_length'])
-    a = a.calculateFeature(periodic_lc[:, 0])
+    a = benchmark(a.calculateFeature, periodic_lc[:, 0])
 
     assert(a.result(method='array') == 1)
 
+
+def test_bench_Autocor(benchmark, white_noise):
+    a = FeatureSpace(featureList=['Autocor_length'])
+    a = benchmark(a.calculateFeature, white_noise[:, 0])
+
+    assert(a.result(method='array') == 1)
+
+
 @pytest.mark.skip('Automean was removed from the library')
-def test_Automean(white_noise):
+def test_Automean(benchmark, white_noise):
     a = FeatureSpace(featureList=['Automean'] , Automean=[0,0])
-    a = a.calculateFeature(white_noise[0])
+    a = benchmark(a.calculateFeature, white_noise[0])
 
     assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
 
 @pytest.mark.skip('Invalid assertions')
-def test_B_R(white_noise):
+def test_B_R(benchmark, white_noise):
     a = FeatureSpace(featureList=['Q31_color'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
 
-def test_Beyond1Std(white_noise):
+def test_Beyond1Std(benchmark, white_noise):
     a = FeatureSpace(featureList=['Beyond1Std'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >=
             0.30 and a.result(method='array') <= 0.40)
 
 
-def test_Mean(white_noise):
+def test_Mean(benchmark, white_noise):
     a = FeatureSpace(featureList=['Mean'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >= -
             0.1 and a.result(method='array') <= 0.1)
 
 @pytest.mark.skip('Invalid assertions')
-def test_CAR(white_noise):
+def test_CAR(benchmark, white_noise):
     a = FeatureSpace(featureList=['CAR_sigma', 'CAR_tau', 'CAR_mean'])
     a = a.calculateFeature(white_noise)
 
     assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
 
-def test_Con(white_noise):
+def test_bench_CAR(benchmark, white_noise):
+    a = FeatureSpace(featureList=['CAR_sigma', 'CAR_tau', 'CAR_mean'])
+    a = benchmark(a.calculateFeature, white_noise)
+
+
+def test_Con(benchmark, white_noise):
     a = FeatureSpace(featureList=['Con'], Con=1)
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >=
             0.04 and a.result(method='array') <= 0.05)
 
 
-def test_Eta_color(white_noise):
+def test_Eta_color(benchmark, white_noise):
     a = FeatureSpace(featureList=['Eta_color'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >=
             1.9 and a.result(method='array') <= 2.1)
 
 
-def test_Eta_e(white_noise):
+def test_Eta_e(benchmark, white_noise):
     a = FeatureSpace(featureList=['Eta_e'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >=
             1.9 and a.result(method='array') <= 2.1)
 
 
-def test_FluxPercentile(white_noise):
+def test_FluxPercentile(benchmark, white_noise):
     a = FeatureSpace(featureList=['FluxPercentileRatioMid20', 'FluxPercentileRatioMid35',
                      'FluxPercentileRatioMid50', 'FluxPercentileRatioMid65', 'FluxPercentileRatioMid80'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array')[0] >= 0.145 and a.result(
         method='array')[0] <= 0.160)
@@ -174,120 +189,120 @@ def test_FluxPercentile(white_noise):
         method='array')[4] <= 0.800)
 
 
-def test_LinearTrend(white_noise):
+def test_LinearTrend(benchmark, white_noise):
     a = FeatureSpace(featureList=['LinearTrend'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >= -
             0.1 and a.result(method='array') <= 0.1)
 
-def test_MaxSlope(sine_lc):
+def test_MaxSlope(benchmark, sine_lc):
     a = FeatureSpace(featureList=['MaxSlope'])
-    a = a.calculateFeature(sine_lc)
+    a = benchmark(a.calculateFeature, sine_lc)
 
     assert(a.result(method='array') >= 0.156 and a.result(method='array') <= 0.157)
 
 
-def test_Meanvariance(uniform_lc):
+def test_Meanvariance(benchmark, uniform_lc):
     a = FeatureSpace(featureList=['Meanvariance'])
-    a = a.calculateFeature(uniform_lc)
+    a = benchmark(a.calculateFeature, uniform_lc)
 
     assert (a.result(method='array') >=
             0.575 and a.result(method='array') <= 0.580)
 
 
-def test_MedianAbsDev(white_noise):
+def test_MedianAbsDev(benchmark, white_noise):
     a = FeatureSpace(featureList=['MedianAbsDev'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >=
             0.630 and a.result(method='array') <= 0.700)
 
-def test_MedianBRP(sequence):
+def test_MedianBRP(benchmark, sequence):
     a = FeatureSpace(featureList=['MedianBRP'])
-    a = a.calculateFeature(sequence)
+    a = benchmark(a.calculateFeature, sequence)
 
     assert(a.result(method='array') >= 0.19 and a.result(method='array') <= 0.21)
 
 
-def test_PairSlopeTrend(white_noise):
+def test_PairSlopeTrend(benchmark, white_noise):
     a = FeatureSpace(featureList=['PairSlopeTrend'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >= -
             0.25 and a.result(method='array') <= 0.25)
 
-def test_PercentAmplitude(sequence):
+def test_PercentAmplitude(benchmark, sequence):
     a = FeatureSpace(featureList=['PercentAmplitude'])
-    a = a.calculateFeature(sequence)
+    a = benchmark(a.calculateFeature, sequence)
 
     assert(a.result(method='array') >= 0.99 and a.result(method='array') <= 1.01)
 
-def test_PercentDifferenceFluxPercentile(sequence):
+def test_PercentDifferenceFluxPercentile(benchmark, sequence):
     a = FeatureSpace(featureList=['PercentDifferenceFluxPercentile'])
-    a = a.calculateFeature(sequence)
+    a = benchmark(a.calculateFeature, sequence)
 
     assert(a.result(method='array') >= 1.801 and a.result(method='array') <= 1.802)
 
 
-def test_Period_Psi(periodic_lc):
+def test_Period_Psi(benchmark, periodic_lc):
     a = FeatureSpace(
         featureList=['PeriodLS', 'Period_fit', 'Psi_CS', 'Psi_eta'])
-    a = a.calculateFeature(periodic_lc)
+    a = benchmark(a.calculateFeature, periodic_lc)
     assert (a.result(method='array')[0] >=
             19 and a.result(method='array')[0] <= 21)
 
 
-def test_Q31(white_noise):
+def test_Q31(benchmark, white_noise):
     a = FeatureSpace(featureList=['Q31'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
     assert (a.result(method='array') >=
             1.30 and a.result(method='array') <= 1.38)
 
 @pytest.mark.skip('No assertions')
-def test_Q31B_R(white_noise):
+def test_Q31B_R(benchmark, white_noise):
     a = FeatureSpace(featureList=['Q31B_R'], Q31B_R = [aligned_second_data, aligned_data])
-    a = a.calculateFeature(white_noise[0])
+    a = benchmark(a.calculateFeature, white_noise[0])
 
 
-def test_Rcs(white_noise):
+def test_Rcs(benchmark, white_noise):
     a = FeatureSpace(featureList=['Rcs'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
     assert (a.result(method='array') >= 0 and a.result(method='array') <= 0.1)
 
 
-def test_Skew(white_noise):
+def test_Skew(benchmark, white_noise):
     a = FeatureSpace(featureList=['Skew'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
     assert (a.result(method='array') >= -
             0.1 and a.result(method='array') <= 0.1)
 
 
 @pytest.mark.skip('No assertions')
-def test_SlottedA(white_noise):
+def test_SlottedA(benchmark, white_noise):
     a = FeatureSpace(featureList=['SlottedA'], SlottedA = [mjd, 1])
-    a=a.calculateFeature(white_noise[0])
+    a = benchmark(a.calculateFeature, white_noise[0])
 
-def test_SmallKurtosis(white_noise):
+def test_SmallKurtosis(benchmark, white_noise):
     a = FeatureSpace(featureList=['SmallKurtosis'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
     assert (a.result(method='array') >= -
             0.2 and a.result(method='array') <= 0.2)
 
 
-def test_Std(white_noise):
+def test_Std(benchmark, white_noise):
     a = FeatureSpace(featureList=['Std'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array') >=
             0.9 and a.result(method='array') <= 1.1)
 
 
 @pytest.mark.skip('Invalid assertions')
-def test_Stetson(white_noise):
+def test_Stetson(benchmark, white_noise):
     a = FeatureSpace(featureList=[
                      'SlottedA_length', 'StetsonK', 'StetsonK_AC', 'StetsonJ', 'StetsonL'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert (a.result(method='array')[
             1] >= 0.790 and a.result(method='array')[1] <= 0.85)
@@ -299,17 +314,19 @@ def test_Stetson(white_noise):
             0.1 and a.result(method='array')[4] <= 0.1)
 
 
-def test_Gskew(white_noise):
+def test_Gskew(benchmark, white_noise):
     a = FeatureSpace(featureList=['Gskew'])
-    a = a.calculateFeature(white_noise)
+    a = benchmark(a.calculateFeature, white_noise)
+
     assert (a.result(method='array') >= -
             0.2 and a.result(method='array') <= 0.2)
 
 
-def test_StructureFunction(random_walk):
+def test_StructureFunction(benchmark, random_walk):
     a = FeatureSpace(featureList=['StructureFunction_index_21', 'StructureFunction_index_31',
                                   'StructureFunction_index_32'])
-    a = a.calculateFeature(random_walk)
+    a = benchmark(a.calculateFeature, random_walk)
+
     assert (a.result(method='array')[0] >= 1.520 and a.result(
         method='array')[0] <= 2.067)
     assert (a.result(method='array')[1] >= 1.821 and a.result(
