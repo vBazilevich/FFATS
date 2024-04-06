@@ -4,6 +4,7 @@
 #include <limits>
 #include <numbers>
 #include <vector>
+#include <omp.h>
 
 namespace py = pybind11;
 
@@ -22,6 +23,8 @@ double fast_CAR(py::array_t<double> parameters, py::array_t<double> t, py::array
 
     int N = t_buf.shape[0];
     double x_mean = 0;
+
+    #pragma omp parallel for reduction(+:x_mean)
     for (int i = 0; i < N; ++i) {
         x_mean += x_ptr[i];
     }
