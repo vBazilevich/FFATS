@@ -1,6 +1,6 @@
 FFATS: Fast FATS
 ==============================
-This is a fork of _FATS https://github.com/isadoranun/FATS focused on a high performance and low computation time.
+This is a fork of https://github.com/isadoranun/FATS focused on a high performance and low computation time.
 
 -----------------------------------------------------
 
