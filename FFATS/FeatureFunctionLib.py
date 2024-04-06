@@ -15,6 +15,8 @@ from scipy.interpolate import interp1d
 from .Base import Base
 from . import lomb
 
+from .pybind11_CAR.build.fast_CAR import *
+
 
 class Amplitude(Base):
     """Half the difference between the maximum and the minimum magnitude"""
@@ -895,49 +897,11 @@ class CAR_sigma(Base):
         self.Data = ['magnitude', 'time', 'error']
 
     def CAR_Lik(self, parameters, t, x, error_vars):
+        loglik = fast_CAR(parameters, t, x, error_vars)
 
-        sigma = parameters[0]
-        tau = parameters[1]
-
-        b = np.mean(x) / tau
-        epsilon = 1e-300
-        cte_neg = -np.infty
-        num_datos = np.size(x)
-
-        Omega = []
-        x_hat = []
-        a = np.exp(-(t[1:] - t[:-1]) / tau)
-        x_ast = x - b * tau
-
-        Omega.append((tau * (sigma ** 2)) / 2.)
-        x_hat.append(0.)
-
-        loglik = 0.
-
-        for i in range(1, num_datos):
-            a_new = a[i - 1]
-            x_hat.append(
-                a_new * x_hat[i - 1] +
-                (a_new * Omega[i - 1] / (Omega[i - 1] + error_vars[i - 1])) *
-                (x_ast[i - 1] - x_hat[i - 1]))
-
-            Omega.append(
-                Omega[0] * (1 - (a_new ** 2)) + ((a_new ** 2)) * Omega[i - 1] *
-                (1 - (Omega[i - 1] / (Omega[i - 1] + error_vars[i - 1]))))
-
-            loglik_inter = np.log(
-                ((2 * np.pi * (Omega[i] + error_vars[i])) ** -0.5) *
-                (np.exp(-0.5 * (((x_hat[i] - x_ast[i]) ** 2) /
-                 (Omega[i] + error_vars[i]))) + epsilon))
-
-            loglik = loglik + loglik_inter
-
-            if (loglik <= cte_neg):
-                print('CAR lik se fue a inf')
-                return None
-
-        # the minus one is to perfor maximization using the minimize function
-        return -loglik
+        if math.isnan(loglik):
+            return None
+        return loglik
 
     def calculateCAR(self, time, data, error):
 
