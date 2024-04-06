@@ -1,9 +1,16 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from codecs import open  # To use a consistent encoding
 import os
+from pybind11.setup_helpers import Pybind11Extension
+from glob import glob
 
 
 REPO_DIR = os.path.dirname(os.path.realpath(__file__))
+
+# ext_modules = [Pybind11Extension(
+        # "fast_CAR",
+        # sorted(glob("FFATS/pybind11_CAR/*.cpp"))
+#     )]
 
 
 # Get the long description from the relevant file
@@ -31,13 +38,13 @@ setup(
     description='Library with compilation of features for time series',
     long_description=readme(),
     # The project's main homepage.
-    url=' http://isadoranun.github.io/tsfeat/FeaturesDocumentation.html',
+    url='https://github.com/vBazilevich/FFATS',
 
-    download_url = 'https://github.com/isadoranun/tsfeat',
+    download_url = 'https://github.com/vBazilevich/FFATS',
 
     # Author details
-    author='Isadora Nun',
-    author_email='isadoranun@seas.harvard.edu',
+    author='Vladimir Bazilevich',
+    author_email='bazilevichvl@gmail.com',
 
     # Choose your license
     license='MIT licence',
@@ -61,9 +68,6 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
@@ -76,6 +80,7 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    # ext_modules=ext_modules,
 
     #packages = ['FFATS'],
     
