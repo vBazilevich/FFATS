@@ -28,7 +28,7 @@ def get_requirements():
             if not line.startswith("#")]
 
 setup(
-    name='FFATS',
+    name='ffats',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
