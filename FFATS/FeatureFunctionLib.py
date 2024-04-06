@@ -15,7 +15,7 @@ from scipy.interpolate import interp1d
 from .Base import Base
 from . import lomb
 
-from .pybind11_CAR.build.fast_CAR import *
+from fast_CAR import *
 
 
 class Amplitude(Base):
