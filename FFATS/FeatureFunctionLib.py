@@ -25,7 +25,7 @@ class Amplitude(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data
+        magnitude = data[0]
         N = magnitude.shape[0]
         sorted_mag = np.sort(magnitude)
 
@@ -89,7 +89,7 @@ class Autocor_length(Base):
 
     def fit(self, data):
 
-        magnitude = data
+        magnitude = data[0]
         AC = stattools.acf(magnitude, nlags=self.nlags)
         k = next((index for index, value in
                  enumerate(AC) if value < np.exp(-1)), None)
@@ -500,7 +500,7 @@ class MedianBRP(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data
+        magnitude = data[0]
         median = np.median(magnitude)
         amplitude = (np.max(magnitude) - np.min(magnitude)) / 10
         n = magnitude.shape[0]
@@ -645,7 +645,7 @@ class PercentDifferenceFluxPercentile(Base):
         self.Data = ['magnitude']
 
     def fit(self, data):
-        magnitude = data
+        magnitude = data[0]
         median_data = np.median(magnitude)
 
         sorted_data = np.sort(magnitude)

@@ -79,7 +79,7 @@ def random_walk():
 
 @pytest.fixture
 def sequence():
-    return range(1000)
+    return np.arange(1000).reshape(1, -1)
 
 
 def test_Amplitude(benchmark, sequence):
@@ -92,24 +92,16 @@ def test_Amplitude(benchmark, sequence):
 
 def test_Autocor(benchmark, periodic_lc):
     a = FeatureSpace(featureList=['Autocor_length'])
-    a = benchmark(a.calculateFeature, periodic_lc[:, 0])
+    a = benchmark(a.calculateFeature, periodic_lc)
 
     assert(a.result(method='array') == 1)
 
 
 def test_bench_Autocor(benchmark, white_noise):
     a = FeatureSpace(featureList=['Autocor_length'])
-    a = benchmark(a.calculateFeature, white_noise[:, 0])
+    a = benchmark(a.calculateFeature, white_noise)
 
     assert(a.result(method='array') == 1)
-
-
-@pytest.mark.skip('Automean was removed from the library')
-def test_Automean(benchmark, white_noise):
-    a = FeatureSpace(featureList=['Automean'] , Automean=[0,0])
-    a = benchmark(a.calculateFeature, white_noise[0])
-
-    assert(a.result(method='array') >= 0.043 and a.result(method='array') <= 0.046)
 
 
 @pytest.mark.skip('Invalid assertions')
@@ -262,7 +254,7 @@ def test_Q31(benchmark, white_noise):
 @pytest.mark.skip('No assertions')
 def test_Q31B_R(benchmark, white_noise):
     a = FeatureSpace(featureList=['Q31B_R'], Q31B_R = [aligned_second_data, aligned_data])
-    a = benchmark(a.calculateFeature, white_noise[0])
+    a = benchmark(a.calculateFeature, white_noise)
 
 
 def test_Rcs(benchmark, white_noise):
@@ -281,7 +273,7 @@ def test_Skew(benchmark, white_noise):
 @pytest.mark.skip('No assertions')
 def test_SlottedA(benchmark, white_noise):
     a = FeatureSpace(featureList=['SlottedA'], SlottedA = [mjd, 1])
-    a = benchmark(a.calculateFeature, white_noise[0])
+    a = benchmark(a.calculateFeature, white_noise)
 
 def test_SmallKurtosis(benchmark, white_noise):
     a = FeatureSpace(featureList=['SmallKurtosis'])
