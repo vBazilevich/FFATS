@@ -81,6 +81,15 @@ def random_walk():
 def sequence():
     return np.arange(1000).reshape(1, -1)
 
+def test_bench_Preprocess_LC(benchmark):
+    N = 500
+    data = np.arange(N)
+    mjd = np.arange(N)
+    error = np.random.randn(N)
+
+    preprocess_lc = Preprocess_LC(data, mjd, error)
+    benchmark(preprocess_lc.Preprocess)
+
 
 def test_Amplitude(benchmark, sequence):
     a = FeatureSpace(featureList=['Amplitude'])
