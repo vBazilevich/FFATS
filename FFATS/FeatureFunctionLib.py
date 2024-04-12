@@ -144,7 +144,7 @@ class SlottedA_length(Base):
 
         # We calculate it for the rest of the ks
         if second_round is False:
-            for k in np.arange(1, K):
+            for k in range(1, K):
                 idx = np.where(ks == k)
                 if len(idx[0]) != 0:
                     prod[k] = sum(data[idx[0]] * data[idx[1]]) / (len(idx[0]))
@@ -153,7 +153,7 @@ class SlottedA_length(Base):
                 else:
                     prod[k] = np.infty
         else:
-            for k in np.arange(K1, K):
+            for k in range(K1, K):
                 idx = np.where(ks == k)
                 if len(idx[0]) != 0:
                     prod[k] = sum(data[idx[0]] * data[idx[1]]) / (len(idx[0]))
@@ -197,7 +197,7 @@ class SlottedA_length(Base):
                 [SAC, slots] = self.slotted_autocorrelation(magnitude,
                                                             time, self.T, K,
                                                             second_round=True,
-                                                            K1=K/2)
+                                                            K1=K//2)
                 SAC2 = SAC[slots]
                 k = next((index for index, value in
                          enumerate(SAC2) if value < np.exp(-1)), None)

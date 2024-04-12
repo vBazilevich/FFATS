@@ -279,9 +279,9 @@ def test_Skew(benchmark, white_noise):
             0.1 and a.result(method='array') <= 0.1)
 
 
-@pytest.mark.skip('No assertions')
+# @pytest.mark.skip('No assertions')
 def test_SlottedA(benchmark, white_noise):
-    a = FeatureSpace(featureList=['SlottedA'], SlottedA = [mjd, 1])
+    a = FeatureSpace(featureList=['SlottedA_length'])
     a = benchmark(a.calculateFeature, white_noise)
 
 def test_SmallKurtosis(benchmark, white_noise):
@@ -297,6 +297,7 @@ def test_Std(benchmark, white_noise):
 
     assert (a.result(method='array') >=
             0.9 and a.result(method='array') <= 1.1)
+
 
 
 @pytest.mark.skip('Invalid assertions')
