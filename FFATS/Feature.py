@@ -42,7 +42,7 @@ class FeatureSpace:
 
     """
 
-    def __init__(self, Data=None, featureList=None, excludeList=[], **kwargs):
+    def __init__(self, Data=None, featureList=None, excludeList=[], suppress_warnings=True, **kwargs):
         self.featureFunc = []
         self.featureList = []
         self.featureOrder = []
@@ -98,8 +98,9 @@ class FeatureSpace:
                                             (inspect.getsourcelines(obj)[-1:])[0])
                                         self.featureList.append(name)
                                     else:
-                                        print(
-                                            f"Warning: the feature {name} could not be calculated because {obj().Data} are needed.")
+                                        if not suppress_warnings:
+                                            print(
+                                                f"Warning: the feature {name} could not be calculated because {obj().Data} are needed.")
                 else:
 
                     for feature in featureList:
@@ -109,8 +110,9 @@ class FeatureSpace:
                                     if set(obj().Data).issubset(self.Data):
                                         self.featureList.append(name)
                                     else:
-                                        print(
-                                            f"Warning: the feature {name} could not be calculated because {obj().Data} are needed.")
+                                        if not suppress_warnings:
+                                            print(
+                                                f"Warning: the feature {name} could not be calculated because {obj().Data} are needed.")
 
             if self.featureOrder != []:
                 self.sort = True
