@@ -35,10 +35,10 @@ class FeatureSpace:
     data = np.random.randint(0,10000, 100000000)
     # automean is the featurename and [0,0] is the parameter for the feature
     a = FeatureSpace(category='all', automean=[0,0])
-    print a.featureList
+    print(a.featureList)
     a=a.calculateFeature(data)
-    print a.result(method='array')
-    print a.result(method='dict')
+    print(a.result(method='array'))
+    print(a.result(method='dict'))
 
     """
 

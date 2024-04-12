@@ -19,7 +19,7 @@ class ReadLC_MACHO:
 
         self.content1 = self.content1[3:]
 
-        for i in xrange(len(self.content1)):
+        for i in range(len(self.content1)):
             if not self.content1[i]:
                 break
             else:

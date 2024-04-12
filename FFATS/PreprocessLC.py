@@ -17,7 +17,7 @@ class Preprocess_LC:
         data_out = []
         error_out = []
 
-        for i in xrange(len(self.data)):
+        for i in range(len(self.data)):
 
             if self.error[i] < (3 * self.m) and (np.absolute(self.data[i] - np.mean(self.data)) / np.std(self.data)) < 5:
 
