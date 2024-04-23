@@ -54,9 +54,9 @@ class FeatureSpace:
             self.Data = Data
 
             if self.Data == 'all':
-                if featureList == None:
+                if featureList is None:
 
-                    if excludeList == None:
+                    if excludeList is None:
                         for name, obj in inspect.getmembers(featureFunction):
                             if inspect.isclass(obj) and name != 'Base':
                                 if obj.__module__.endswith('FeatureFunctionLib'):
